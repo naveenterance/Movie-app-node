@@ -104,7 +104,6 @@ router.post("/users/:name", async (req, res) => {
   const { name } = req.params;
 
   try {
-    console.log("Searching for user with name:", name);
     const user = await User.findOne({ name });
 
     if (!user) {
@@ -115,6 +114,28 @@ router.post("/users/:name", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.put("/users/:name", async (req, res) => {
+  const { name } = req.params;
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { name: name },
+      { email, password },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    res.send(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error);
   }
 });
 
